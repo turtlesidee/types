@@ -1,4 +1,4 @@
-import { BaseConfig } from './interface';
+import { BaseConfig, Enum } from './interface';
 import * as t from 'io-ts';
 import { pipe } from 'fp-ts/function';
 import { fold } from 'fp-ts/Either';
@@ -52,6 +52,20 @@ export const NumberBase = <A>(config: BaseConfig<number> = {}) =>
       }
 
       return t.success(config.format ? (config.format(val) as unknown as number & A) : (val as unknown as number & A));
+    },
+    (a) => a,
+  );
+
+export const Enumeration = <T>(d: Enum) =>
+  new t.Type<T, T, unknown>(
+    'Enumeration',
+    (u): u is T => typeof u === typeof d,
+    (u, c) => {
+      const list = Object.keys(d) as T[];
+      if (!list.includes(u as T)) {
+        return t.failure(u, c, `value unexpected, must be one of ${list.join(', ')}`);
+      }
+      return t.success(u as T);
     },
     (a) => a,
   );

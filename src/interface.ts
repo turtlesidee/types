@@ -4,3 +4,7 @@ export interface BaseConfig<T> {
   pattern?: { value: RegExp; error_message: string };
   format?: (s: T) => T;
 }
+
+export interface Enum {
+  [id: string]: string;
+}
